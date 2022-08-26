@@ -2,7 +2,11 @@ import { User } from '../entities/user.entity';
 import { InvalidCredentials } from '../error/invalid-credentials';
 import { UserRepository } from '../repository/user.repository';
 import { HasherServiceI, SessionServiceI } from './auth.services.dependencies';
-import { AuthenticatedUser, RegisterAuthParams } from './auth.services.dto';
+import {
+  AuthenticatedUser,
+  LoginAuthParams,
+  RegisterAuthParams,
+} from './auth.services.dto';
 
 export class AuthServices {
   constructor(
@@ -21,7 +25,7 @@ export class AuthServices {
     return user.toJson();
   }
 
-  async loginUser(params: RegisterAuthParams): Promise<AuthenticatedUser> {
+  async loginUser(params: LoginAuthParams): Promise<AuthenticatedUser> {
     const { email, password: rawPassword } = params;
     const errorText = 'Invalid email or password';
 

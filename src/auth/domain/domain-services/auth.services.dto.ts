@@ -5,10 +5,16 @@ export type RegisterAuthParams = {
   email: string;
 };
 
+export type LoginAuthParams = {
+  email: string;
+  password: string;
+};
+
 export type AuthenticatedUser = {
   id: string;
   cpf: string;
   email: string;
+  session: string;
   fullName: string;
 };
 

@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 export type UserConstructor = {
   fullName: string;
+  session?: string;
   password: string;
   email: string;
   cpf: string;
@@ -27,14 +28,6 @@ export class User {
     this._session = session;
   }
 
-  get id(): string {
-    return this._id;
-  }
-
-  get password(): string {
-    return this.password;
-  }
-
   toJson() {
     return {
       id: this._id,
@@ -44,5 +37,24 @@ export class User {
       password: this._password,
       session: this._session,
     };
+  }
+
+  get id(): string {
+    return this._id;
+  }
+  get password(): string {
+    return this.password;
+  }
+  get fullName(): string {
+    return this._fullName;
+  }
+  get email(): string {
+    return this._email;
+  }
+  get cpf(): string {
+    return this._cpf;
+  }
+  get session(): string {
+    return this._session;
   }
 }
