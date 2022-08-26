@@ -43,7 +43,7 @@ export class User {
     return this._id;
   }
   get password(): string {
-    return this.password;
+    return this._password;
   }
   get fullName(): string {
     return this._fullName;

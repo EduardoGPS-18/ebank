@@ -19,8 +19,13 @@ export class AuthServices {
     const { password: rawPassword } = params;
     const password = await this.hasher.encrypt(rawPassword);
     const user = new User({ ...params, password: password });
-
-    await this.userRepository.create(user);
+    try {
+      await this.userRepository.create(user);
+    } catch (err) {
+      if (err.code == 23505) {
+        throw new InvalidCredentials('User already exists');
+      }
+    }
 
     return user.toJson();
   }
@@ -35,11 +40,17 @@ export class AuthServices {
     const passwordMatch = await this.hasher.compare(rawPassword, user.password);
     if (!passwordMatch) throw new InvalidCredentials(errorText);
 
-    const session = await this.session.generate({ sub: user.id, email: email });
+    return user.toJson();
+  }
+
+  async updateSession({ email }: { email: string }): Promise<void> {
+    const user = await this.userRepository.findByEmail({ email });
+    const session = this.session.generate({
+      email: user.email,
+      sub: user.id,
+    });
     user.updateSession({ session });
     await this.userRepository.update(user);
-
-    return user.toJson();
   }
 
   async validateFromToken(token: string): Promise<AuthenticatedUser> {

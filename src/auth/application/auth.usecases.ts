@@ -17,7 +17,9 @@ export class AuthUseCase {
     params: RegisterAuthParams,
   ): Promise<AuthenticatedUserResult> {
     try {
-      return this.authService.registerUser(params);
+      const user = await this.authService.registerUser(params);
+      await this.authService.updateSession({ email: user.email });
+      return user;
     } catch (err) {
       if (err instanceof InvalidCredentials) {
         throw new BadRequestException(err.message);
@@ -28,7 +30,9 @@ export class AuthUseCase {
 
   async loginUser(params: LoginAuthParams): Promise<AuthenticatedUserResult> {
     try {
-      return this.authService.loginUser(params);
+      const user = await this.authService.loginUser(params);
+      await this.authService.updateSession({ email: user.email });
+      return user;
     } catch (err) {
       if (err instanceof InvalidCredentials) {
         throw new BadRequestException(err.message);

@@ -6,6 +6,6 @@ export abstract class HasherServiceI {
 }
 
 export abstract class SessionServiceI {
-  abstract generate(payload: Payload): Promise<string>;
-  abstract verify(token: string): Promise<Payload>;
+  abstract generate(payload: Payload): string;
+  abstract verify(token: string): Payload;
 }
