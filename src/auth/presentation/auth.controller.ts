@@ -7,7 +7,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthUseCases } from '../application/auth.usecases';
 import {
   AuthenticatedUserDTO,
@@ -17,6 +17,7 @@ import {
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
+@ApiTags('Authentication operations')
 export class AuthController {
   constructor(private authUseCase: AuthUseCases) {}
 

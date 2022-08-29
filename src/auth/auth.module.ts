@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { getDataSourceToken, TypeOrmModule } from '@nestjs/typeorm';
+import { BankModule } from 'src/bank/bank.module';
+import { BankExternalInterface } from 'src/bank/external-interfaces/bank.external-interfaces';
 import { DataSource } from 'typeorm';
 import { AuthUseCases } from './application/auth.usecases';
 import { AuthServices } from './domain/services/auth.services';
@@ -24,6 +26,7 @@ import { AuthController } from './presentation/auth.controller';
       }),
     }),
     TypeOrmModule.forFeature([UserModel]),
+    forwardRef(() => BankModule),
   ],
   exports: [AuthExternalInterface],
   providers: [
@@ -57,9 +60,12 @@ import { AuthController } from './presentation/auth.controller';
     },
     {
       provide: AuthUseCases,
-      inject: [AuthServices],
-      useFactory: (authService: AuthServices) => {
-        return new AuthUseCases(authService);
+      inject: [AuthServices, BankExternalInterface],
+      useFactory: (
+        authService: AuthServices,
+        bankServices: BankExternalInterface,
+      ) => {
+        return new AuthUseCases(authService, bankServices);
       },
     },
     {

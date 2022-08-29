@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { randomUUID } from 'crypto';
+import { UserType } from '../application/auth.dto';
 
 class BaseRegisterUserDTO {
   @ApiProperty({ example: '12345678901', type: 'string' })
@@ -26,6 +27,9 @@ export class AuthenticatedUserDTO extends BaseRegisterUserDTO {
 export class RegisterUserDTO extends BaseRegisterUserDTO {
   @ApiProperty({ example: '123456' })
   password: string;
+
+  @ApiProperty({ enum: UserType, default: UserType.customer })
+  userType: UserType;
 }
 
 export class SigninUserDTO {
