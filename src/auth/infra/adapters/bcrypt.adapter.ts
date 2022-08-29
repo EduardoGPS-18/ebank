@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { HasherServiceI } from 'src/auth/domain/domain-services/auth.services.dependencies';
+import { HasherServiceI } from 'src/auth/domain/services/auth.services.dependencies';
 
 export class BcryptAdapter implements HasherServiceI {
   async encrypt(value: string): Promise<string> {

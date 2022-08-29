@@ -5,18 +5,20 @@ import {
   Get,
   InternalServerErrorException,
   Post,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
-import { AuthUseCase } from '../application/auth.usecases';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { AuthUseCases } from '../application/auth.usecases';
 import {
   AuthenticatedUserDTO,
   RegisterUserDTO,
   SigninUserDTO,
 } from './auth.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authUseCase: AuthUseCase) {}
+  constructor(private authUseCase: AuthUseCases) {}
 
   @Post('signup')
   @ApiResponse({ type: AuthenticatedUserDTO, status: 200 })
@@ -35,6 +37,8 @@ export class AuthController {
   }
 
   @Get('self')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({ type: AuthenticatedUserDTO, status: 200 })
   @ApiResponse({ type: BadRequestException, status: 400 })
   @ApiResponse({ type: InternalServerErrorException, status: 500 })

@@ -2,15 +2,15 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { AuthServices } from '../domain/domain-services/auth.services';
+import { InvalidCredentials } from '../domain/error/invalid-credentials';
+import { AuthServices } from '../domain/services/auth.services';
 import {
   LoginAuthParams,
   RegisterAuthParams,
-} from '../domain/domain-services/auth.services.dto';
-import { InvalidCredentials } from '../domain/error/invalid-credentials';
+} from '../domain/services/auth.services.dto';
 import { AuthenticatedUserResult } from './auth.dto';
 
-export class AuthUseCase {
+export class AuthUseCases {
   constructor(private authService: AuthServices) {}
 
   async registerUser(
@@ -18,8 +18,10 @@ export class AuthUseCase {
   ): Promise<AuthenticatedUserResult> {
     try {
       const user = await this.authService.registerUser(params);
-      await this.authService.updateSession({ email: user.email });
-      return user;
+      const withNewSessionUser = await this.authService.updateSession({
+        email: user.email,
+      });
+      return withNewSessionUser;
     } catch (err) {
       if (err instanceof InvalidCredentials) {
         throw new BadRequestException(err.message);
@@ -31,9 +33,12 @@ export class AuthUseCase {
   async loginUser(params: LoginAuthParams): Promise<AuthenticatedUserResult> {
     try {
       const user = await this.authService.loginUser(params);
-      await this.authService.updateSession({ email: user.email });
-      return user;
+      const withNewSessionUser = await this.authService.updateSession({
+        email: user.email,
+      });
+      return withNewSessionUser;
     } catch (err) {
+      console.log(err);
       if (err instanceof InvalidCredentials) {
         throw new BadRequestException(err.message);
       }

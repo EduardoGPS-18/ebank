@@ -43,7 +43,11 @@ export class AuthServices {
     return user.toJson();
   }
 
-  async updateSession({ email }: { email: string }): Promise<void> {
+  async updateSession({
+    email,
+  }: {
+    email: string;
+  }): Promise<AuthenticatedUser> {
     const user = await this.userRepository.findByEmail({ email });
     const session = this.session.generate({
       email: user.email,
@@ -51,6 +55,7 @@ export class AuthServices {
     });
     user.updateSession({ session });
     await this.userRepository.update(user);
+    return user.toJson();
   }
 
   async validateFromToken(token: string): Promise<AuthenticatedUser> {

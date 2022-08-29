@@ -17,6 +17,10 @@ export class TypeormUserRepository implements UserRepository {
 
   async findByEmail({ email }: { email: string }): Promise<User> {
     const userModel = await this.repository.findOneBy({ email });
-    return UserMapper.to(userModel);
+    try {
+      return UserMapper.to(userModel);
+    } catch (err) {
+      console.log(userModel);
+    }
   }
 }

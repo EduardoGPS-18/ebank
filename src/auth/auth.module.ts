@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { getDataSourceToken, TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { AuthUseCase } from './application/auth.usecases';
-import { AuthServices } from './domain/domain-services/auth.services';
+import { AuthUseCases } from './application/auth.usecases';
+import { AuthServices } from './domain/services/auth.services';
+import { AuthExternalInterface } from './external-interfaces/auth.external-interfaces';
+import { AuthExternalInterfaceIMPL } from './external-interfaces/auth.external-interfaces.impl';
 import { BcryptAdapter } from './infra/adapters/bcrypt.adapter';
 import { SessionAdapter } from './infra/adapters/session.adapter';
 import { UserModel } from './infra/typeorm/models/user.model';
@@ -12,7 +15,17 @@ import { AuthController } from './presentation/auth.controller';
 
 @Module({
   controllers: [AuthController],
-  imports: [JwtModule, TypeOrmModule.forFeature([UserModel])],
+  imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+      }),
+    }),
+    TypeOrmModule.forFeature([UserModel]),
+  ],
+  exports: [AuthExternalInterface],
   providers: [
     {
       provide: BcryptAdapter,
@@ -43,10 +56,17 @@ import { AuthController } from './presentation/auth.controller';
       },
     },
     {
-      provide: AuthUseCase,
+      provide: AuthUseCases,
       inject: [AuthServices],
       useFactory: (authService: AuthServices) => {
-        return new AuthUseCase(authService);
+        return new AuthUseCases(authService);
+      },
+    },
+    {
+      provide: AuthExternalInterface,
+      inject: [AuthUseCases],
+      useFactory: (authUseCase: AuthUseCases) => {
+        return new AuthExternalInterfaceIMPL(authUseCase);
       },
     },
   ],

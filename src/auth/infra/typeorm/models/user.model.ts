@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity('user')
+@Entity('user', { schema: 'auth' })
 export class UserModel {
   @PrimaryColumn('uuid')
   id: string;

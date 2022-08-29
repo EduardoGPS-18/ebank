@@ -11,14 +11,16 @@ export type UserConstructor = {
 export class User {
   protected _fullName: string;
   protected _password: string;
-  protected _session: string;
+  protected _session?: string;
   protected _email: string;
   protected _cpf: string;
   protected _id?: string;
 
-  constructor({ fullName, password, email, cpf, id }: UserConstructor) {
+  constructor(params: UserConstructor) {
+    const { fullName, password, email, cpf, id, session } = params;
     this._fullName = fullName;
     this._password = password;
+    this._session = session;
     this._email = email;
     this._cpf = cpf;
     this._id = id ?? randomUUID();

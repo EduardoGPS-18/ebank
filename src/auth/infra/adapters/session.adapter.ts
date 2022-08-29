@@ -1,6 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
-import { SessionServiceI } from 'src/auth/domain/domain-services/auth.services.dependencies';
-import { Payload } from 'src/auth/domain/domain-services/auth.services.dto';
+import { SessionServiceI } from 'src/auth/domain/services/auth.services.dependencies';
+import { Payload } from 'src/auth/domain/services/auth.services.dto';
 
 export class SessionAdapter implements SessionServiceI {
   constructor(private jwtService: JwtService) {}
