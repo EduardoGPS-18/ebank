@@ -26,7 +26,6 @@ export class AuthServices {
         throw new InvalidCredentials('User already exists');
       }
     }
-
     return user.toJson();
   }
 
@@ -59,8 +58,7 @@ export class AuthServices {
   }
 
   async validateFromToken(token: string): Promise<AuthenticatedUser> {
-    const { email } = await this.session.verify(token);
-
+    const { email } = this.session.verify(token);
     const user = await this.userRepository.findByEmail({ email });
     if (!user) throw new InvalidCredentials('Invalid email or password');
 
